@@ -305,7 +305,15 @@ class Vector(Matrix):
 	
 	@staticmethod
 	def cross_product(u, v):
-		pass
+		if not (u.size == 3 and u.size == v.size):
+			raise TypeError("Invalid input: it requires two-3dimensional Vectors.")
+		x1, y1, z1 = u.tolist()
+		x2, y2, z2 = v.tolist()
+
+		cross_x = float(y1 * z2 - y2 * z1)
+		cross_y = float(z1 * x2 - z2 * x1)
+		cross_z = float(x1 * y2 - x2 * y1)
+		return Vector([[cross_x, cross_y, cross_z]])
 	
 	def dot(self, other):
 		if not isinstance(other, Vector):
