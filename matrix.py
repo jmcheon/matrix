@@ -109,11 +109,30 @@ class Matrix:
 		return determinant
 	
 	def inverse(self):
-		pass
+		if self.shape[0] != self.shape[1]:
+			raise TypeError("Inverse is undefined for non-square matrices.")
+		if self.determinant() == 0:
+			raise ValueError(f"Matrix is not invertable.")
+		# create an augmented matrix [A|I]
+		augmented_matrix = [row + [float(i == j) for j in range(self.shape[0])] for i, row in enumerate(self.data)]
+		augmented_matrix = Matrix(augmented_matrix)
+
+		# apply Gauss-Jordan elimination to obtain the reduced row-echelon form
+		rref_matrix = augmented_matrix.row_echelon()
+
+		# extract the inverse matrix [I|B]
+		inverse_matrix = [row[self.shape[0]:] for row in rref_matrix.data]
+		return inverse_matrix
 	
 	def rank(self):
-		pass
-
+		# apply Gauss-Jordan elimination to obtain the reduced row-echelon form
+		self.row_echelon()
+		rank = 0
+		# count the number of non-zero rows
+		for row in self.data:
+			if any(row):
+				rank += 1
+		return rank
 
 	# add : only matrices of same dimensions.
 	def __add__(self, other):
@@ -192,6 +211,9 @@ class Matrix:
 	def __repr__(self):
 		txt = f"Matrix({self.data}) {self.shape}"
 		return txt
+
+	def tolist(self):
+		return np.reshape(self.data, self.shape).tolist()
 
 class Vector(Matrix):
 	
