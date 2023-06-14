@@ -1,0 +1,372 @@
+import numpy as np
+
+class Matrix:
+
+	def __init__(self, data):
+		"""
+		data: list of lists
+		shape: the dimensions of the matrix as a tuple (rows, columns)
+		"""
+		self.data = []
+		# the elements of the matrix as a list of lists: Matrix([[1.0, 2.0], [3.0, 4.0]])
+		if isinstance(data, list):
+			if all(isinstance(elem, list) and len(data[0]) == len(elem) and all(isinstance(i, float) for i in elem) for elem in data):
+				self.data = data
+				self.shape = (len(data), len(data[0])) 
+		# a shape: Matrix((3, 3)) (the matrix will be filled with zeros by default)
+		elif isinstance(data, tuple) and len(data) == 2 and all(isinstance(elem, int) and elem >= 0 for elem in data):
+			for i in range(data[0]):
+				row = []
+				for j in range(data[1]):
+					row.append(0)
+				self.data.append(row)
+				self.shape = (data[0], data[1])
+		else:
+			raise ValueError("Invalid form of data,", data)
+
+	def T(self):
+		".T() method which returns the transpose of the matrix."
+		transposed = []
+		for j in range(self.shape[1]):
+			row = []
+			for i in range(self.shape[0]):
+				row.append(self.data[i][j])
+			transposed.append(row)
+		return Matrix(transposed)
+
+	def mul_vec(self, other):
+		if isinstance(other, Vector):
+			if self.shape[1] != other.size:
+			#if self.shape[1] != other.shape[0]:
+				raise ValueError("Matrices cannot be multiplied, dimensions don't match.")
+			other.data = np.reshape(other.data, (self.shape[1], -1)).tolist()
+			other.shape = (self.shape[1], 1)
+			result = [[sum([self.data[i][k] * other.data[k][j] for k in range(self.shape[1])]) for j in range(other.shape[1])] for i in range(self.shape[0])]
+			return Vector(result)
+		else:
+			raise TypeError("Invalid type of input value.")
+
+	def mul_mat(self, other):
+		if isinstance(other, Matrix):
+			if self.shape[1] != other.shape[0]:
+				raise ValueError("Matrices cannot be multiplied, dimensions don't match.")
+			result = [[sum([self.data[i][k] * other.data[k][j] for k in range(self.shape[1])]) for j in range(other.shape[1])] for i in range(self.shape[0])]
+			return Matrix(result)
+		else:
+			raise TypeError("Invalid type of input value.")
+
+	def trace(self):
+		if self.shape[0] != self.shape[1]:
+			raise TypeError("Trace is undefined for non-square matrices.")
+		trace = 0.0
+		for i in range(self.shape[0]):
+			trace += self.data[i][i]
+		return trace
+
+	def row_echelon(self):
+		# Gaussian elimination with back-substitution for reduced row echelon from
+		pivot = 0
+		for row in range(self.shape[0]):
+			if pivot >= self.shape[1]:
+				break
+			# find a non-zero pivot element in the current pivot
+			while self.data[row][pivot] == 0:
+				pivot += 1
+				if pivot >= self.shape[1]:
+					return self
+			# swap the current row with a row containing a non-zero pivot element
+			for i in range(row + 1, self.shape[0]):
+				if self.data[i][pivot] != 0:
+					self.data[row], self.data[i] = self.data[i], self.data[row]
+					break
+			# scale the current row to make the pivot element 1
+			divisor = self.data[row][pivot]
+			self.data[row] = [elem / divisor for elem in self.data[row]]
+
+			# perform the row operations to eliminate other non-zero elements in the current column
+			for i in range(self.shape[0]):
+				if i != row:
+					multiplier = self.data[i][pivot]
+					self.data[i] = [elem - multiplier * self.data[row][j] for j, elem in enumerate(self.data[i])]
+			pivot += 1
+		return self
+
+	def determinant(self):
+		if self.shape[0] != self.shape[1]:
+			raise TypeError("Determinant is undefined for non-square matrices.")
+		# Base case for 2 x 2 matrix
+		if self.shape[0] == 2:
+			return self.data[0][0] * self.data[1][1] - self.data[0][1] * self.data[1][0]
+		# Cofactor expansion for more than 3 x 3 matrix
+		determinant = 0.0
+		for j in range(self.shape[1]):
+			# compute the cofactor of element self.data[0][j]
+			submatrix = [[self.data[i][k] for k in range(self.shape[1]) if k != j] for i in range(1, self.shape[0])]
+			submatrix = Matrix(submatrix)
+			cofactor = (-1) ** j * submatrix.determinant()
+			# add the cofactor multiplied by the element matrix[0][j] to the determinant
+			determinant += self.data[0][j] * cofactor
+		return determinant
+	
+	def inverse(self):
+		pass
+	
+	def rank(self):
+		pass
+
+
+	# add : only matrices of same dimensions.
+	def __add__(self, other):
+		if not isinstance(other, Matrix):
+			raise TypeError("unsupported operand type(s) for +: '{}' and '{}'".format(type(self), type(other)))
+			#raise TypeError(f"Invalid input: {func.__name__} requires a Matrix object.")
+		if self.shape != other.shape:
+			raise ValueError(f"Invalid input: addition requires a Matrix of same shape.")
+		result = [[self.data[i][j] + other.data[i][j] for j in range(self.shape[1])] for i in range(self.shape[0])]
+		return Matrix(result)
+
+	def __radd__(self, other):
+		if not isinstance(other, Matrix):
+			raise TypeError("unsupported operand type(s) for +: '{}' and '{}'".format(type(self), type(other)))
+		if self.shape != other.shape:
+			raise ValueError("Invalid input: __add__ requires matrics of the same shape.")
+		return other + self
+
+	# sub : only matrices of same dimensions.
+	def __sub__(self, other):
+		if not isinstance(other, Matrix):
+			raise TypeError("unsupported operand type(s) for +: '{}' and '{}'".format(type(self), type(other)))
+			#raise TypeError(f"Invalid input: {func.__name__} requires a Matrix object.")
+		if self.shape != other.shape:
+			raise ValueError(f"Invalid input: subtraction requires a Matrix of same shape.")
+		result = [[self.data[i][j] - other.data[i][j] for j in range(self.shape[1])] for i in range(self.shape[0])]
+		return Matrix(result)
+
+	def __rsub__(self, other):
+		if not isinstance(other, Matrix):
+			raise TypeError("unsupported operand type(s) for +: '{}' and '{}'".format(type(self), type(other)))
+		if self.shape != other.shape:
+			raise ValueError("Invalid input: __add__ requires matrics of the same shape.")
+		return other - self
+
+	# div : only scalars.
+	def __truediv__(self, scalar):
+		if isinstance(scalar, Matrix):
+			raise NotImplementedError("Division with a Matrix object is not implemented.")
+		if not any(isinstance(scalar, scalar_type) for scalar_type in [int, float, complex]):
+			raise TypeError("Invalid input of scalar value.")
+		if scalar == 0:
+			raise ValueError("Can't divide by 0.")
+		result = [[self.data[i][j] / scalar for j in range(self.shape[1])] for i in range(self.shape[0])]
+		return Matrix(result)
+
+	def __rtruediv__(self, scalar):
+		raise NotImplementedError("Division of a scalar by a Matrix object is not defined here.")
+
+	# mul : scalars, vectors and matrices , can have errors with vectors and matrices,
+	# returns a Vector if we perform Matrix * Vector mutliplication.
+	def __mul__(self, other):
+		if any(isinstance(other, scalar_type) for scalar_type in [int, float, complex]):
+			result = [[self.data[i][j] * other for j in range(self.shape[1])] for i in range(self.shape[0])]
+			return Matrix(result)
+		elif isinstance(other, Vector):
+			if self.shape[1] != other.shape[0]:
+				raise ValueError("Matrices cannot be multiplied, dimensions don't match.")
+			result = [[sum([self.data[i][k] * other.data[k][j] for k in range(self.shape[1])]) for j in range(other.shape[1])] for i in range(self.shape[0])]
+			return Vector(result)
+		elif isinstance(other, Matrix):
+			if self.shape[1] != other.shape[0]:
+				raise ValueError("Matrices cannot be multiplied, dimensions don't match.")
+			result = [[sum([self.data[i][k] * other.data[k][j] for k in range(self.shape[1])]) for j in range(other.shape[1])] for i in range(self.shape[0])]
+			return Matrix(result)
+		else:
+			raise TypeError("Invalid type of input value.")
+
+	def __rmul__(self, x):
+		return self * x
+
+	def __str__(self):
+		txt = f"Matrix({self.data}) {self.shape}"
+		return txt
+
+	def __repr__(self):
+		txt = f"Matrix({self.data}) {self.shape}"
+		return txt
+
+class Vector(Matrix):
+	
+	def __init__(self, data):
+		self.data = []
+		# when data is a list
+		if isinstance(data, list):
+			# initialize a list of a list of floats : Vector([[0.0, 1.0, 2.0, 3.0]])
+			if len(data) == 1 and isinstance(data[0], list) and len(data[0]) > 0 and all(type(i) in [int, float] for i in data[0]):	
+				self.data = data
+				self.shape = (1, len(data[0]))
+				self.size = len(data[0])
+			# initialize a list of lists of single float : Vector([[0.0], [1.0], [2.0], [3.0]])
+			elif all(isinstance(elem, list) and len(elem) == 1 and all(type(i) in [int, float] for i in elem) for elem in data):
+				self.data = data
+				self.shape = (len(data), 1)
+				self.size = len(data)
+			else:
+				raise ValueError("Invalid form of list,", data)
+		else:
+			raise ValueError("Invalid form of data,", data)
+
+	@staticmethod
+	def linear_combination(lst_vectors, coefs):
+		if not isinstance(lst_vectors, list):
+			raise ValueError("Invalid form of list,", lst_vectors)
+		if not all(isinstance(v, Vector) for v in lst_vectors):
+			raise TypeError("Invalid input: list should contain only Vectors.", lst_vectors)
+		if not all(v.size == lst_vectors[0].size for v in lst_vectors):
+			raise TypeError("Invalid input: list of Vectors should contain Vectors of the same shape.", lst_vectors)
+		if not isinstance(coefs, list):
+			raise ValueError("Invalid form of list,", coefs)
+		if len(coefs) != len(lst_vectors) or not all(type(i) in [int, float] for i in coefs):
+			raise TypeError("Invalid input: unsupported type or uncompatiable length with list of Vectors", coefs)
+		v_size = lst_vectors[0].size
+		v = [[0.0] for _ in range(v_size)]
+		for i in range(len(lst_vectors)):
+			for j in range(v_size):
+				v[j][0] += lst_vectors[i].data[0][j] * coefs[i]
+		return Vector(v)
+
+	@staticmethod
+	def lerp(u, v, t):
+		if type(u) != type(v):
+			raise TypeError("Invalid input: uncompatiable type")
+		if not (isinstance(t, float) and (0 <= t <= 1)):
+			raise ValueError("Invalid value: a real number from 0 to 1 required.", t)
+		if any(isinstance(u, accepted_type) for accepted_type in [int, float, Vector, Matrix]):
+			return u + (v - u) * t 
+		else:
+			raise TypeError("Invalid input: unsupported type")
+
+	def norm_1(self):
+		abs_sum = 0.0
+		lst_data = np.reshape(self.data, (1, -1))[0]
+		for elem in lst_data:
+			if elem >= 0:
+				abs_sum += elem
+			else:
+				abs_sum -= elem
+		return float(abs_sum)
+
+	def norm(self):
+		squared_sum = 0.0
+		lst_data = np.reshape(self.data, (1, -1))[0]
+		for elem in lst_data:
+			squared_sum += elem ** 2
+		return float(squared_sum ** 0.5)
+
+	def norm_inf(self):
+		max_abs_value = float('-inf')
+		lst_data = np.reshape(self.data, (1, -1))[0]
+		for elem in lst_data:
+			if elem >= 0:
+				abs_value = elem
+			else:
+				abs_value = -elem
+			if abs_value > max_abs_value:
+				max_abs_value = abs_value
+		return float(max_abs_value)
+
+	def angle_cos(u, v):
+		if not all(isinstance(vec, Vector) for vec in [u, v]):
+			raise TypeError("Invalid input: it requires a Vector of compatible shape.")
+		if u.size != v.size:
+			raise TypeError("Invalid input: it requires a Vector of compatible shape.")
+		cosine_similarity = u.dot(v) / (u.norm() * v.norm())
+		return np.around(cosine_similarity, decimals=10)
+	
+	@staticmethod
+	def cross_product(u, v):
+		pass
+	
+	def dot(self, other):
+		if not isinstance(other, Vector):
+			raise TypeError("unsupported operand type(s) for +: '{}' and '{}'".format(type(self), type(other)))
+		if self.size != other.size:
+			raise TypeError("Invalid input: it requires a Vector of compatible shape.")
+		dot_product = 0.0
+		for i in range(self.size):
+			dot_product += self.tolist()[i] * other.tolist()[i]
+		return dot_product
+
+	def dot2(self, other):
+		if not isinstance(other, Vector):
+			raise TypeError("unsupported operand type(s) for +: '{}' and '{}'".format(type(self), type(other)))
+		if self.shape[1] != other.shape[0]:
+			raise TypeError("Invalid input: dot product requires a Vector of compatible shape.")
+		result = 0.0
+		for i in range(self.shape[0]):
+			for j in range(self.shape[1]):
+				result += self.data[i][j] * other.data[j][i]
+		return result
+
+	def T(self):
+		".T() method which returns the transpose of the matrix."
+		transposed = []
+		for j in range(self.shape[1]):
+			row = []
+			for i in range(self.shape[0]):
+				row.append(self.data[i][j])
+			transposed.append(row)
+		return Matrix(transposed)
+
+	def __add__(self, other):
+		if not isinstance(other, Vector):
+			raise TypeError("unsupported operand type(s) for +: '{}' and '{}'".format(type(self), type(other)))
+		if self.shape != other.shape:
+			raise ValueError("Invalid input: __add__ requires vectors of the same shape.")
+		result = [[self.data[i][j] + other.data[i][j] for j in range(self.shape[1])] for i in range(self.shape[0])]
+		return Vector(result)
+	
+	def __sub__(self, other):
+		if not isinstance(other, Vector):
+			raise TypeError("unsupported operand type(s) for -: '{}' and '{}'".format(type(self), type(other)))
+		if self.shape != other.shape:
+			raise ValueError("Invalid input: __sub__ requires vectors of the same shape.")
+		result = [[self.data[i][j] - other.data[i][j] for j in range(self.shape[1])] for i in range(self.shape[0])]
+		return Vector(result)
+	
+	def __mul__(self, other):
+		if any(isinstance(other, scalar_type) for scalar_type in [int, float, complex]):
+			result = [[self.data[i][j] * other for j in range(self.shape[1])] for i in range(self.shape[0])]
+			return Vector(result)
+		elif isinstance(other, Vector):
+			if self.shape[1] != other.shape[0]:
+				raise ValueError("Vectors cannot be multiplied, dimensions don't match.")
+			result = [[self.data[i][j] * other for j in range(self.shape[1])] for i in range(self.shape[0])]
+			return Vector(result)
+		elif isinstance(other, Matrix):
+			if self.shape[1] != other.shape[0]:
+				raise ValueError("Matrices cannot be multiplied, dimensions don't match.")
+			result = [[sum([self.data[i][k] * other.data[k][j] for k in range(self.shape[1])]) for j in range(other.shape[1])] for i in range(self.shape[0])]
+			return Matrix(result)
+		else:
+			raise TypeError("Invalid type of input value.")
+	
+	def __truediv__(self, scalar):
+		if isinstance(scalar, Vector):
+			raise NotImplementedError("Vector division is not implemented.")
+		elif not any(isinstance(scalar, scalar_type) for scalar_type in [int, float, complex]):
+			raise TypeError("Invalid input of scalar value.")
+		if scalar == 0:
+			raise ValueError("Can't divide by 0.")
+		result = [[self.data[i][j] / scalar for j in range(self.shape[1])] for i in range(self.shape[0])]
+		return Vector(result)
+
+	def __str__(self):
+		txt = f"Vector({self.data}) {self.shape}"
+		return txt
+
+	def __repr__(self):
+		txt = f"Vector({self.data}) {self.shape}"
+		return txt
+
+	def tolist(self):
+		return np.reshape(self.data, (1, -1))[0]
+
