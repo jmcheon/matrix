@@ -1,8 +1,4 @@
-import os, sys
-
-path = os.path.join(os.path.dirname(__file__), '..', '')
-sys.path.insert(1, path)
-from matrix import Matrix, Vector
+from matrix import Vector
 
 if __name__ == "__main__":
 

@@ -1,9 +1,4 @@
-import os, sys
-import numpy as np
-
-path = os.path.join(os.path.dirname(__file__), '..', '')
-sys.path.insert(1, path)
-from matrix import Matrix, Vector
+from matrix import Matrix
 
 if __name__ == "__main__":
 	u = Matrix([[1., 0.],[0., 1.]]);

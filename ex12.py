@@ -1,8 +1,3 @@
-import os, sys
-import numpy as np
-
-path = os.path.join(os.path.dirname(__file__), '..', '')
-sys.path.insert(1, path)
 from matrix import Matrix
 
 if __name__ == "__main__":
