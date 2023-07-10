@@ -238,22 +238,20 @@ class Vector(Matrix):
 
 	@staticmethod
 	def linear_combination(lst_vectors, coefs):
-		if not isinstance(lst_vectors, list):
-			raise ValueError("Invalid form of list,", lst_vectors)
+		if not all(isinstance(lst, list) for lst in [lst_vectors, coefs]):
+			raise ValueError("Invalid form of list")
 		if not all(isinstance(v, Vector) for v in lst_vectors):
 			raise TypeError("Invalid input: list should contain only Vectors.", lst_vectors)
 		if not all(v.size == lst_vectors[0].size for v in lst_vectors):
 			raise TypeError("Invalid input: list of Vectors should contain Vectors of the same shape.", lst_vectors)
-		if not isinstance(coefs, list):
-			raise ValueError("Invalid form of list,", coefs)
 		if len(coefs) != len(lst_vectors) or not all(type(i) in [int, float] for i in coefs):
 			raise TypeError("Invalid input: unsupported type or uncompatiable length with list of Vectors", coefs)
+
 		v_size = lst_vectors[0].size
-		v = [[0.0] for _ in range(v_size)]
-		for i in range(len(lst_vectors)):
-			for j in range(v_size):
-				v[j][0] += lst_vectors[i].data[0][j] * coefs[i]
-		return Vector(v)
+		v = Vector([[0.0] * v_size])
+		for vector, coef in zip(lst_vectors, coefs):
+			v += vector * coef
+		return (v)
 
 	@staticmethod
 	def lerp(u, v, t):
