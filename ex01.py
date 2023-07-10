@@ -1,15 +1,17 @@
 from matrix import Vector
 
 def ex1():
-	v1 = Vector([[-42., 42.]])
-	v2 = Vector([[42.]])
+	v1 = Vector([[-42., 42.]]);
+	v2 = Vector([[-42.]]);
+	v3 = Vector([[1., 3.]]);
+	v4 = Vector([[10., 20.]]);
+	v5 = Vector([[-42., 100., -69.5]]);
+	v6 = Vector([[1., 3., 5.]]);
+
 	print(Vector.linear_combination([v1], [-1.])); # '[42., -42.]'
 	print(Vector.linear_combination([v2, v2, v2], [-1., 1., 0.])); # '[0.]'
-	print(Vector.linear_combination([v1], [-1.])); # '[42., -42.]'
-'linear_combination([Vector::from([-42., 42.]), Vector::from([1., 3.]), Vector::from([10., 20.])], [1., -10., -1.])'
-gives '[-62., -8.]'
-'linear_combination([Vector::from([-42., 100., -69.5]), Vector::from([1., 3., 5.])], [1., -10.])' gives '[-52., 70.,
--119.5]'
+	print(Vector.linear_combination([v1, v3, v4], [1., -10., -1.])); # '[-62., -8.]'
+	print(Vector.linear_combination([v5, v6], [1., -10.])); # '[-52., 70., -119.5]'
 
 def main():
 	e1 = Vector([[1., 0., 0.]]);
