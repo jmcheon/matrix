@@ -10,7 +10,7 @@ class Matrix:
 		self.data = []
 		# the elements of the matrix as a list of lists: Matrix([[1.0, 2.0], [3.0, 4.0]])
 		if isinstance(data, list):
-			if all(isinstance(elem, list) and len(data[0]) == len(elem) and all(isinstance(i, float) for i in elem) for elem in data):
+			if all(isinstance(elem, list) and len(data[0]) == len(elem) and all(type(i) in [int, float, complex] for i in elem) for elem in data):
 				self.data = data
 				self.shape = (len(data), len(data[0])) 
 		# a shape: Matrix((3, 3)) (the matrix will be filled with zeros by default)
@@ -222,12 +222,12 @@ class Vector(Matrix):
 		# when data is a list
 		if isinstance(data, list):
 			# initialize a list of a list of floats : Vector([[0.0, 1.0, 2.0, 3.0]])
-			if len(data) == 1 and isinstance(data[0], list) and len(data[0]) > 0 and all(type(i) in [int, float] for i in data[0]):	
+			if len(data) == 1 and isinstance(data[0], list) and len(data[0]) > 0 and all(type(i) in [int, float, complex] for i in data[0]):	
 				self.data = data
 				self.shape = (1, len(data[0]))
 				self.size = len(data[0])
 			# initialize a list of lists of single float : Vector([[0.0], [1.0], [2.0], [3.0]])
-			elif all(isinstance(elem, list) and len(elem) == 1 and all(type(i) in [int, float] for i in elem) for elem in data):
+			elif all(isinstance(elem, list) and len(elem) == 1 and all(type(i) in [int, float, complex] for i in elem) for elem in data):
 				self.data = data
 				self.shape = (len(data), 1)
 				self.size = len(data)
@@ -261,7 +261,7 @@ class Vector(Matrix):
 			raise TypeError("Invalid input: uncompatiable type")
 		if not (isinstance(t, float) and (0 <= t <= 1)):
 			raise ValueError("Invalid value: a real number from 0 to 1 required.", t)
-		if any(isinstance(u, accepted_type) for accepted_type in [int, float, Vector, Matrix]):
+		if any(isinstance(u, accepted_type) for accepted_type in [int, float, complex, Vector, Matrix]):
 			return u + (v - u) * t 
 		else:
 			raise TypeError("Invalid input: unsupported type")
