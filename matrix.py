@@ -64,7 +64,7 @@ class Matrix:
 		return trace
 
 	def row_echelon(self):
-		# Gaussian elimination with back-substitution for reduced row echelon from
+		# gaussian elimination with back-substitution for reduced row echelon from
 		pivot = 0
 		for row in range(self.shape[0]):
 			if pivot >= self.shape[1]:
@@ -91,13 +91,13 @@ class Matrix:
 			pivot += 1
 		return self
 
-	def determinant(self):
+	def determinant2(self):
 		if self.shape[0] != self.shape[1]:
 			raise TypeError("Determinant is undefined for non-square matrices.")
-		# Base case for 2 x 2 matrix
+		# base case for 2 x 2 matrix
 		if self.shape[0] == 2:
 			return self.data[0][0] * self.data[1][1] - self.data[0][1] * self.data[1][0]
-		# Cofactor expansion for more than 3 x 3 matrix
+		# cofactor expansion for more than 3 x 3 matrix
 		determinant = 0.0
 		for j in range(self.shape[1]):
 			# compute the cofactor of element self.data[0][j]
@@ -107,6 +107,40 @@ class Matrix:
 			# add the cofactor multiplied by the element matrix[0][j] to the determinant
 			determinant += self.data[0][j] * cofactor
 		return determinant
+
+	def determinant(self):
+		if self.shape[0] != self.shape[1]:
+			raise TypeError("Determinant is undefined for non-square matrices.")
+	
+		# base case for 2 x 2 matrix
+		if self.shape[0] == 2:
+			return self.data[0][0] * self.data[1][1] - self.data[0][1] * self.data[1][0]
+
+		matrix_copy = [row.copy() for row in self.data]
+		det = 1.0
+		
+		# gaussian elimination
+		for i in range(self.shape[0]):
+			# find the pivot
+			for j in range(i, self.shape[0]):
+				if matrix_copy[j][i] != 0:
+					# swap rows if necessary
+					if i != j:
+						matrix_copy[i], matrix_copy[j] = matrix_copy[j], matrix_copy[i]
+						det *= -1
+					
+					# scale the current row to make the pivot element 1
+					pivot = matrix_copy[i][i]
+					det *= pivot
+					matrix_copy[i] = [elem / pivot for elem in matrix_copy[i]]
+					
+					# eliminate other non-zero elements in the same column
+					for k in range(i + 1, self.shape[0]):
+						factor = matrix_copy[k][i]
+						matrix_copy[k] = [x - y * factor for x, y in zip(matrix_copy[k], matrix_copy[i])]
+					break
+		return det
+
 	
 	def inverse(self):
 		if self.shape[0] != self.shape[1]:
@@ -272,14 +306,14 @@ class Vector(Matrix):
 				abs_sum += elem
 			else:
 				abs_sum -= elem
-		return float(abs_sum)
+		return abs_sum
 
 	def norm(self):
 		squared_sum = 0.0
 		lst_data = np.reshape(self.data, (1, -1))[0]
 		for elem in lst_data:
 			squared_sum += elem ** 2
-		return float(squared_sum ** 0.5)
+		return squared_sum ** 0.5
 
 	def norm_inf(self):
 		max_abs_value = float('-inf')
@@ -291,7 +325,7 @@ class Vector(Matrix):
 				abs_value = -elem
 			if abs_value > max_abs_value:
 				max_abs_value = abs_value
-		return float(max_abs_value)
+		return max_abs_value
 
 	def angle_cos(u, v):
 		if not all(isinstance(vec, Vector) for vec in [u, v]):
@@ -308,9 +342,9 @@ class Vector(Matrix):
 		x1, y1, z1 = u.tolist()
 		x2, y2, z2 = v.tolist()
 
-		cross_x = float(y1 * z2 - y2 * z1)
-		cross_y = float(z1 * x2 - z2 * x1)
-		cross_z = float(x1 * y2 - x2 * y1)
+		cross_x = (y1 * z2 - y2 * z1)
+		cross_y = (z1 * x2 - z2 * x1)
+		cross_z = (x1 * y2 - x2 * y1)
 		return Vector([[cross_x, cross_y, cross_z]])
 	
 	def dot(self, other):
@@ -396,5 +430,5 @@ class Vector(Matrix):
 		return txt
 
 	def tolist(self):
-		return np.reshape(self.data, (1, -1))[0]
+		return np.reshape(self.data, (1, -1))[0].tolist()
 

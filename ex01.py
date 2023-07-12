@@ -13,20 +13,6 @@ def ex1():
 	print(Vector.linear_combination([v1, v3, v4], [1., -10., -1.])); # '[-62., -8.]'
 	print(Vector.linear_combination([v5, v6], [1., -10.])); # '[-52., 70., -119.5]'
 
-def complex_ex():
-	print("\nComplex number examples.")
-	v1 = Vector([[-42j, 42j]]);
-	v2 = Vector([[-42j]]);
-	v3 = Vector([[1., 3j]]);
-	v4 = Vector([[10j, 20.]]);
-	v5 = Vector([[3 - 42j, 100 + 1j, -69.5]]);
-	v6 = Vector([[1j, 3j, 5j]]);
-
-	print(Vector.linear_combination([v1], [-1.])); # '[42j, -42j]'
-	print(Vector.linear_combination([v2, v2, v2], [-1., 1., 0.])); # '[0j]'
-	print(Vector.linear_combination([v1, v3, v4], [1., -10., -1.])); # '[-10-52j, -20+12j]'
-	print(Vector.linear_combination([v5, v6], [1., -10.])); # '[3-52j, 100-29j, -69.5-50j]'
-
 def main():
 	e1 = Vector([[1., 0., 0.]]);
 	e2 = Vector([[0., 1., 0.]]);
@@ -45,5 +31,4 @@ def errors():
 
 if __name__ == "__main__":
 	ex1()
-	complex_ex()
 	#errors()

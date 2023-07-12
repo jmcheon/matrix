@@ -25,31 +25,6 @@ def ex1():
 	v = Vector([[2.], [1.]]);
 	print(u.dot(v)); # 10.0
 
-def complex_ex():
-	u = Vector([[0j, 0j]]);
-	v = Vector([[0j], [0j]]);
-	print(u.dot(v)); # 0j
-
-	u = Vector([[1j, 0j]]);
-	v = Vector([[0j], [0j]]);
-	print(u.dot(v)); # 0j
-
-	u = Vector([[1j, 0j]]);
-	v = Vector([[1j], [0j]]);
-	print(u.dot(v)); # -1+0j
-
-	u = Vector([[1j, 0j]]);
-	v = Vector([[0j], [2j]]);
-	print(u.dot(v)); # 0j
-
-	u = Vector([[1j, 1j]]);
-	v = Vector([[1j], [1j]]);
-	print(u.dot(v)); # -2+0j
-
-	u = Vector([[4j, 2j]]);
-	v = Vector([[2j], [1j]]);
-	print(u.dot(v)); # -10+0j
-
 def main():
 	u = Vector([[0., 0.]]);
 	v = Vector([[1.], [1.]]);
@@ -65,4 +40,3 @@ def main():
 
 if __name__ == "__main__":
 	ex1()
-	complex_ex()
