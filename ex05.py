@@ -39,5 +39,5 @@ def main():
 	print(Vector.angle_cos(u, v)); # 0.974631846
 
 if __name__ == "__main__":
-	#ex1()
-	main()
+	ex1()
+	#main()

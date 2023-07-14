@@ -36,5 +36,5 @@ def main():
 	print(u.norm_1(), u.norm(), u.norm_inf()); # 3.0, 2.236067977, 2.0
 
 if __name__ == "__main__":
-	#ex1()
-	main()
+	ex1()
+	#main()

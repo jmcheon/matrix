@@ -1,19 +1,27 @@
-from matrix import Matrix, Vector
-
+import math
 
 def	projection(fov, ratio, near, far):
 	projection_matrix = [[0.0] * 4 for _ in range(4)]
+
+	projection_matrix[0][0] = 1 / (ratio * math.tan(fov / 2))
+	projection_matrix[1][1] = -1 / (math.tan(fov / 2))
+	projection_matrix[2][2] = (far) / (far - near) 
+	projection_matrix[2][3] = (2 * far * near) / (far - near) 
+	projection_matrix[3][2] = 1
 
 	return projection_matrix
 
 
 if __name__ == "__main__":
 	# field of view in degrees
-	fov = 0.0
+	fov = 100.0
 	# window size ratio (width / height)
-	ratio = 0.0
+	ratio = 3 / 2
 	# distance of the near plane
-	near = 0.0
+	near = 2.0
 	# distance of the far plane
-	far = 0.0
+	far = 50.0
 	projection_matrix = projection(fov, ratio, near, far)
+	lst = '\n'.join(','.join(str(elem) for elem in row) for row in projection_matrix)
+	
+	print(lst)

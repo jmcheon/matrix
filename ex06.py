@@ -41,5 +41,5 @@ def main():
 	print(Vector.cross_product(u, v)); # [17.][-58.][-16.]
 
 if __name__ == "__main__":
-	#ex1()
-	main()
+	ex1()
+	#main()

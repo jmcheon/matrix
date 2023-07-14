@@ -27,5 +27,5 @@ def main():
 	print(u.trace()); # -21.0
 
 if __name__ == "__main__":
-	#ex1()
-	main()
+	ex1()
+	#main()

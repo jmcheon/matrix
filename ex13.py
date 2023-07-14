@@ -31,5 +31,5 @@ def main():
 	print(u.rank()) # 3
 
 if __name__ == "__main__":
-	#ex1()
-	main()
+	ex1()
+	#main()

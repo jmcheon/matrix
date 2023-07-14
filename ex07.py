@@ -42,5 +42,5 @@ def main():
 	print(u.mul_mat(v)); # [-14., -7.][44., 22.]
 
 if __name__ == "__main__":
-	#ex1()
-	main()
+	ex1()
+	#main()
