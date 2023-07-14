@@ -735,14 +735,38 @@ La complexité spatiale est  **O(n^2)**, car on stocke une copie de la matrice d
 <tr><td>Maximum time complexity : N/A </tr>
 <tr><td>Maximum space complexity : N/A </tr>
 </table>
-    
-```
 
-```
+#### Les coordonnées homogènes
 
+Les coordonnées homogènes sont une représentation alternative des points et des vecteurs dans un espace euclidien, permettant d'unifier et de simplifier les opérations géométriques telles que la translation, la rotation et la mise à l'echelle, ainsi que d'intégrer la notion de points à l'infini.
+
+#### La transformation homogène de coordonnées.
+
+La transformation homogène de coordonnées est une technique utilisée en géométrie, en infographie et en robotique pour effectuer des transformations géométriques telles que les translations, les rotations et les mises à l'echelle sur des objets en utilisant une seule matrice.
+
+En général, pour un espace 2D, les coordonnées homogènes sont obtenues en ajoutant une troisième composante (généralement égale à 1 pour les points et à 0 pour les vecteurs directionnels) aux coordonnées cartésiennes.
+
+```python
+def	projection(fov, ratio, near, far):
+	projection_matrix = [[0.0] * 4 for _ in range(4)]
+
+	projection_matrix[0][0] = 1 / (ratio * math.tan(fov / 2))
+	projection_matrix[1][1] = -1 / (math.tan(fov / 2))
+	projection_matrix[2][2] = (far) / (far - near) 
+	projection_matrix[2][3] = (2 * far * near) / (far - near) 
+	projection_matrix[3][2] = 1
+
+	return projection_matrix
+```
+La fonction `projection` calcule la matrice de projection perspective, qui est utilisée pour transformer les coordonnées d'un objet 3D dans un espase 2D, généralement à des fins de rendu.
 
 #### Comment elle fonctionne:
 
-
-#### Complexité
+1. Elle prend 4 parametères: champ de vision (`fov`), rapport d'aspect (`ratio`), distance proche (`near`), distance loinaine (`far`).
+1. Elle crée d'abord une matrice 4x4 vide `projection_matrix` remplie de zéros.
+2. Ensuite, elle remplit les éléments spécifiques de la matrice avec les valeurs appropriées en utilisant les arguments donnés.
+	- `projection_matrix[0][0]`: ce terme détermine l'echelle en fonction de l'axe X et est calculé en utilisant le rapport d'aspect `ratio` et le champ de vision `fov`.
+	- `projection_matrix[1][1]`: ce terme détermine l'echelle en fonction de l'axe Y et est calculé en utilisant le champ de vision `fov`.
+	- `projection_matrix[2][2]` et `projection_matrix[2][3]`: ces terme sont responsables de la transformation en profondeur (axe Z) et sont calculés en utilisant les distances `near`, `far`.
+	- `projection_matrix[3][2]`: ce terme est défini sur 1 pour assurer la transformation homogène de coordonnées.
 
