@@ -117,6 +117,31 @@ def complex_ex08():
 	u = Matrix([[1j, 0.],[0., 1j]]);
 	print(u.trace()); # 2j
 
+def complex_ex09():
+	print("\nex09 complex number examples.\n")
+	u = Matrix([[1j, 2j],[3j, 4j]])
+	print("transposed:", u.T()) # '[[1j, 3j], [2j, 4j]]'
+
+def complex_ex10():
+	print("\nex10 complex number examples.\n")
+	u = Matrix([[1j, 2j],[3j, 4j]]);
+	print(u.row_echelon()); # [1+0j, 0j][0j, 1+0j]
+
+def complex_ex11():
+	print("\nex11 complex number examples.\n")
+	u = Matrix([[ 1j, 0.],[0., 1j]]);
+	print(u.determinant()); # -1+0j
+
+def complex_ex12():
+	print("\nex12 complex number examples.\n")
+	u = Matrix([[1j, 0., 0.],[0., 1j, 0.],[0., 0., 1j]]);
+	print(u.inverse())# [-1j, 0j, 0j][0j, -1j, 0j][0j, 0j, -1j]
+
+def complex_ex13():
+	print("\nex13 complex number examples.\n")
+	u = Matrix([[1j, 0., 0.],[0., 1j, 0.],[0., 0., 1j]])
+	print(u.rank()) # 3
+
 if __name__ == "__main__":
 	complex_ex00()
 	complex_ex01()
@@ -127,3 +152,8 @@ if __name__ == "__main__":
 	complex_ex06()
 	complex_ex07()
 	complex_ex08()
+	complex_ex09()
+	complex_ex10()
+	complex_ex11()
+	complex_ex12()
+	complex_ex13()

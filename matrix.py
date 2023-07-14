@@ -159,11 +159,12 @@ class Matrix:
 		return inverse_matrix
 	
 	def rank(self):
+		matrix_copy = Matrix(self.data)
 		# apply Gauss-Jordan elimination to obtain the reduced row-echelon form
-		self.row_echelon()
+		matrix_copy.row_echelon()
 		rank = 0
 		# count the number of non-zero rows
-		for row in self.data:
+		for row in matrix_copy.data:
 			if any(row):
 				rank += 1
 		return rank
